@@ -1,0 +1,31 @@
+{
+  "name": "nlw_agents",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file .env --loader ts-node/esm --no-warnings --watch src/server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Jfdeev",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "2.0.6",
+    "@tsconfig/node21": "^21.0.4",
+    "@types/node": "^24.0.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "ultracite": "5.0.32"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.0.1",
+    "dotenv": "^17.1.0",
+    "fastify": "^5.4.0",
+    "fastify-type-provider-zod": "^5.0.1",
+    "postgres": "^3.4.7",
+    "postgresql": "^0.0.1",
+    "zod": "^3.25.76"
+  }
+}
