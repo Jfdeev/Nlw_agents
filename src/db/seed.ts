@@ -5,3 +5,5 @@ import { schema } from './schema/index.ts';
 await reset(db, {schema});
 
 await seed(db, {schema})
+
+console.log('Database seeded successfully');
