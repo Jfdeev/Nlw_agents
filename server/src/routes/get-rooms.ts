@@ -10,10 +10,10 @@ export const getRooms: FastifyPluginAsyncZod = async (app) => {
             id: schema.rooms.id,
             name: schema.rooms.name,
             description: schema.rooms.description,
-            createAt: schema.rooms.createAt,
+            created_at: schema.rooms,
         })
         .from(schema.rooms)
-        .orderBy(schema.rooms.createAt)
+        .orderBy(schema.rooms.createdAt)
 
         return results
     })
