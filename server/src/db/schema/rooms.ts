@@ -8,5 +8,6 @@ export const rooms = pgTable("rooms", {
     name: text().notNull(),
     description: text().notNull(),
     desciption: text(),
-    createdAt: timestamp("created_at").defaultNow().notNull(), 
+    createdAt: timestamp().defaultNow().notNull()
+
 })

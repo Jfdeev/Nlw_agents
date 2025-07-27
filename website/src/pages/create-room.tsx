@@ -26,6 +26,9 @@ export function CreateRoom() {
             <h1 className="text-4xl font-bold mb-8">Let me Ask</h1>
 
             {isLoading && <p>Carregando</p>}
+            <div>
+                {data && JSON.stringify(data, null, 2)}
+            </div>
 
             <div className="">{data?.map((room) => (
                 <p key={room.id} className="mt-4 text-gray-600">{room.name}</p>
