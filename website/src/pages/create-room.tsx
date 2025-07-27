@@ -26,8 +26,15 @@ export function CreateRoom() {
             <h1 className="text-4xl font-bold mb-8">Let me Ask</h1>
 
             {isLoading && <p>Carregando</p>}
-            <div>
-                {data && JSON.stringify(data, null, 2)}
+           
+            <div className="">
+                {data && data.map((room) => (
+                    <div key={room.id} className="border p-4 mb-4 rounded-lg shadow-md">
+                        <h2 className="text-xl font-semibold">{room.name}</h2>
+                        <p className="text-gray-600">{room.description}</p>
+                        <p className="text-sm text-gray-500">Criada em: {new Date(room.created_at).toLocaleDateString()}</p>
+                    </div>
+                ))}
             </div>
 
             <div className="">{data?.map((room) => (
