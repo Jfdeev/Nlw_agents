@@ -1,5 +1,5 @@
 {
-  "id": "fa7d864d-9399-4af7-8ad1-23454b075e2a",
+  "id": "001aa470-84f4-46e6-a562-c89e04a4ac91",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -27,14 +27,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "desciption": {
-          "name": "desciption",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "create_at": {
-          "name": "create_at",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,

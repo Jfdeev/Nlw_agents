@@ -2,7 +2,6 @@ import { reset , seed  } from 'drizzle-seed'
 import { db, sql } from './connection.ts';
 import { schema } from './schema/index.ts';
 import { rooms } from './schema/rooms.ts';
-import { desc } from 'drizzle-orm';
 
 await reset(db, schema);
 
