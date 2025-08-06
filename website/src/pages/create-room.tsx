@@ -98,10 +98,11 @@ export function CreateRoom() {
                       })}
                     </span>
                   </div>
-
-                  <Button className="w-full mt-4 bg-white border-2 border-blue-500 text-blue-600 hover:bg-blue-500 hover:text-white transition-all duration-300">
-                    Entrar na Sala
-                  </Button>
+                  <Link to={`/room/${room.id}`} >
+                    <Button className="w-full mt-4 bg-white border-2 border-blue-500 text-blue-600 hover:bg-blue-500 hover:text-white transition-all duration-300">
+                      Entrar na Sala
+                    </Button>
+                  </Link>
                 </div>
               ))}
             </div>
