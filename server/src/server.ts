@@ -8,6 +8,7 @@ import {fastifyCors} from '@fastify/cors'
 import { sql } from './db/connection.ts'
 import { env } from './env.ts';
 import { getRooms } from './routes/get-rooms.ts';
+import { createRoomRoute } from './routes/create-room.ts';
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -23,7 +24,8 @@ app.get('/health', () =>{
     return 'OK'
 })
 
-app.register(getRooms)
+app.register(getRooms);
+app.register(createRoomRoute);
 
 app.listen({port: env.PORT }).then(() => {
     console.log(`Server is running on http://localhost:${env.PORT}`)
