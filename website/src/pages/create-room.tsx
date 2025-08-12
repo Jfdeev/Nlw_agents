@@ -36,7 +36,6 @@ export function CreateRoom() {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // Query para buscar salas (top-level)
   const {
     data: rooms,
     isLoading: isRoomsLoading,
@@ -79,7 +78,6 @@ export function CreateRoom() {
     }
   );
 
-  // Handler que pega os dados do formulário (via FormData) e dispara a mutation
   const handleCreateRoom = async (form: HTMLFormElement) => {
     const formData = new FormData(form);
     const name = (formData.get("name") as string) ?? "";

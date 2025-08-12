@@ -205,7 +205,7 @@ export function Room() {
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button
-                className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 rounded-xl"
+                className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 rounded-xl"
               >
                 <Plus className="w-5 h-5 mr-2" />
                 Fazer uma Pergunta
@@ -213,7 +213,7 @@ export function Room() {
             </DialogTrigger>
 
             <DialogContent className="max-w-2xl mx-auto bg-white border-0 shadow-2xl rounded-2xl overflow-hidden">
-              <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-4 relative">
+              <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4 relative">
                 <DialogHeader>
                   <DialogTitle className="text-2xl font-bold text-white flex items-center">
                     <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
@@ -239,7 +239,7 @@ export function Room() {
               <div className="p-6 space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="question" className="text-gray-700 font-medium flex items-center">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
                     Pergunta *
                   </Label>
                   <textarea
@@ -248,13 +248,13 @@ export function Room() {
                     onChange={(e) => setQuestionText(e.target.value)}
                     placeholder="Digite sua pergunta aqui..."
                     rows={3}
-                    className="w-full border-2 border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 rounded-lg px-4 py-3 resize-none transition-all duration-200 outline-none text-gray-600"
+                    className="w-full border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-green-500/20 rounded-lg px-4 py-3 resize-none transition-all duration-200 outline-none text-gray-600"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="answer" className="text-gray-700 font-medium flex items-center">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full mr-2"></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
                     Resposta (opcional)
                   </Label>
                   <textarea
@@ -263,7 +263,7 @@ export function Room() {
                     onChange={(e) => setAnswerText(e.target.value)}
                     placeholder="Se você já tem uma resposta, compartilhe aqui..."
                     rows={4}
-                    className="w-full border-2 border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 rounded-lg px-4 py-3 resize-none transition-all duration-200 outline-none text-gray-600"
+                    className="w-full border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-green-500/20 rounded-lg px-4 py-3 resize-none transition-all duration-200 outline-none text-gray-600"
                   />
                 </div>
 
@@ -343,12 +343,9 @@ export function Room() {
                       </div>
                       
                       {question.answer && question.answer.trim() && (
-                        <div className="border-l-4 border-green-500 pl-4 bg-green-50 py-3 rounded-r-lg">
-                          <div className="flex items-center mb-2">
-                            <CheckCircle2 className="w-5 h-5 text-green-600 mr-2" />
-                            <h4 className="font-semibold text-green-800">Resposta</h4>
-                          </div>
-                          <p className="text-green-700 leading-relaxed">{question.answer}</p>
+                        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                          <h4 className="text-md font-semibold text-green-800 mb-2">Resposta da IA <CheckCircle2 className="inline w-4 h-4 text-green-600 ml-1" /></h4>
+                          <p className="text-gray-700">{question.answer}</p>
                         </div>
                       )}
                       
