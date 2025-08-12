@@ -16,11 +16,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Calendar, Users, Plus, X } from "lucide-react";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 
 type Room = {
   id: string;
   name: string;
   description: string;
+  questionsCount: number;
   created_at: string;
 };
 
@@ -246,7 +248,9 @@ export function CreateRoom() {
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
                       <Users className="w-6 h-6 text-white" />
                     </div>
-                    <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">Ativa</span>
+                    <Badge className="bg-blue-100 text-blue-600 font-medium px-3 py-1 rounded-full">
+                      {room.questionsCount} Perguntas
+                    </Badge>
                   </div>
 
                   <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">{room.name}</h3>

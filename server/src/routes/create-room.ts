@@ -17,7 +17,7 @@ export const createRoomRoute: FastifyPluginCallbackZod = (app) => {
 
             const result = await db.insert(schema.rooms).values({
                 name,
-                description: description ?? '', // Provide a default value for description
+                description: description ?? '',
             }).returning()
 
 

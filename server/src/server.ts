@@ -9,15 +9,19 @@ import { sql } from './db/connection.ts'
 import { env } from './env.ts';
 import { getRooms } from './routes/get-rooms.ts';
 import { createRoomRoute } from './routes/create-room.ts';
+import { createQuestionRoute } from './routes/create-question.ts';
+import { getRoomRoute } from './routes/get-room.ts';
+import { getQuestionsByRoomRoute } from './routes/get-questions-by-room.ts'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
 app.register(fastifyCors, {
-    origin: '*', // Allow all origins
+    origin: '*',
 })
 
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
+
 
 
 app.get('/health', () =>{
@@ -26,6 +30,10 @@ app.get('/health', () =>{
 
 app.register(getRooms);
 app.register(createRoomRoute);
+app.register(createQuestionRoute);
+app.register(getRoomRoute);
+app.register(getQuestionsByRoomRoute);
+
 
 app.listen({port: env.PORT }).then(() => {
     console.log(`Server is running on http://localhost:${env.PORT}`)
