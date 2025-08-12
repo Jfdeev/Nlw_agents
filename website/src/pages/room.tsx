@@ -22,7 +22,9 @@ import {
   X,
   Users,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  BrainCircuit,
+  Ear
 } from "lucide-react";
 import { toast } from "sonner";
 import { useParams } from "react-router-dom";
@@ -163,6 +165,8 @@ export function Room() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
+          <div className="flex items-center justify-between">
+
           <Button 
             variant="outline" 
             className="mb-6 text-gray-600 hover:text-blue-600 border-gray-300 hover:border-blue-300"
@@ -171,6 +175,16 @@ export function Room() {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar às salas
           </Button>
+
+          <Button 
+            variant="outline" 
+            className="mb-6 text-gray-600 hover:text-blue-600 border-gray-300 hover:border-blue-300"
+            onClick={() => setIsDialogOpen(true)}
+          >
+            <Ear className="w-4 h-4 mr-2" />
+            Gravar Audio
+          </Button>
+          </div>
 
           <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
             <div className="flex items-start justify-between mb-4">
@@ -240,7 +254,7 @@ export function Room() {
                 <div className="space-y-2">
                   <Label htmlFor="question" className="text-gray-700 font-medium flex items-center">
                     <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                    Pergunta *
+                    Pergunta 
                   </Label>
                   <textarea
                     id="question"
@@ -272,7 +286,7 @@ export function Room() {
                     <Button
                       type="button"
                       variant="outline"
-                      className="flex-1 text-gray-600 hover:text-green-600 py-3 rounded-lg transition-all duration-200"
+                      className="flex-1 text-gray-600 hover:text-blue-600 py-3 rounded-lg transition-all duration-200"
                     >
                       Cancelar
                     </Button>
@@ -280,7 +294,7 @@ export function Room() {
 
                   <Button
                     onClick={handleCreateQuestion}
-                    className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                    className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                     disabled={createQuestionMutation.isPending}
                   >
                     {createQuestionMutation.isPending ? (
@@ -343,8 +357,8 @@ export function Room() {
                       </div>
                       
                       {question.answer && question.answer.trim() && (
-                        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                          <h4 className="text-md font-semibold text-green-800 mb-2">Resposta da IA <CheckCircle2 className="inline w-4 h-4 text-green-600 ml-1" /></h4>
+                        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                          <h4 className="text-md font-semibold text-blue-600 mb-2">Resposta da IA <BrainCircuit className="inline w-5 h-5 text-blue-600 mr-1" /> </h4>
                           <p className="text-gray-700">{question.answer}</p>
                         </div>
                       )}
