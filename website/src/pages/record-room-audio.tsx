@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
+import { ArrowLeft, Ear } from "lucide-react";
 import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
 
 const isRecordingSupported = !!navigator.mediaDevices 
@@ -56,22 +58,37 @@ export function RecordRoomAudio() {
     }
 
     return (
-        <div className="h-screen flex items-center justify-center bg-blue-50">
-            {isRecording ? (
-                <Button
-                    onClick={stopRecording}
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-700"
-                >
-                    Parar Gravação
-                </Button>
-            ) : (
-                <Button
-                    onClick={startRecording}
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white  hover:from-blue-600 hover:to-blue-700"
-                >
-                    Iniciar Gravação
-                </Button>
-            )}
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+            <div className="flex items-center justify-between">
+                    <Button
+                        variant="outline"
+                        className="mb-6 text-gray-600 hover:text-blue-600 border-gray-300 hover:border-blue-300"
+                        onClick={() => {
+                            window.history.back();
+                        }}
+                    >
+                        <ArrowLeft className="w-4 h-4 mr-2" />
+                        Voltar para a Sala
+                    </Button>
+            </div>
+
+            <div className="flex items-center justify-center">
+                {isRecording ? (
+                    <Button
+                        onClick={stopRecording}
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-700"
+                    >
+                        Parar Gravação
+                    </Button>
+                ) : (
+                    <Button
+                        onClick={startRecording}
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 text-white  hover:from-blue-600 hover:to-blue-700"
+                    >
+                        Iniciar Gravação
+                    </Button>
+                )}
+            </div>
         </div>
     )
 }
