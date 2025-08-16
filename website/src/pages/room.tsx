@@ -13,12 +13,12 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { 
-  ArrowLeft, 
-  Plus, 
-  MessageCircleQuestion, 
-  MessageSquare, 
-  Calendar, 
+import {
+  ArrowLeft,
+  Plus,
+  MessageCircleQuestion,
+  MessageSquare,
+  Calendar,
   X,
   Users,
   CheckCircle2,
@@ -27,7 +27,7 @@ import {
   Ear
 } from "lucide-react";
 import { toast } from "sonner";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 
 type Room = {
@@ -122,16 +122,12 @@ export function Room() {
       return;
     }
 
-    await createQuestionMutation.mutateAsync({ 
-      question: questionText.trim(), 
-      answer: answerText.trim() || undefined 
+    await createQuestionMutation.mutateAsync({
+      question: questionText.trim(),
+      answer: answerText.trim() || undefined
     });
   };
 
-  const handleBackClick = () => {
-    // Em um app real, isso navegaria para a página anterior
-    window.history.back();
-  };
 
   if (isRoomLoading) {
     return (
@@ -151,10 +147,12 @@ export function Room() {
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Sala não encontrada</h2>
           <p className="text-gray-600 mb-6">A sala que você está procurando não existe ou foi removida.</p>
-          <Button onClick={handleBackClick} className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Voltar ao início
-          </Button>
+          <Link to="/">
+            <Button className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Voltar ao início
+            </Button>
+          </Link>
         </div>
       </div>
     );
@@ -166,24 +164,25 @@ export function Room() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
+            <Link to="/">
+              <Button
+                variant="outline"
+                className="mb-6 text-gray-600 hover:text-blue-600 border-gray-300 hover:border-blue-300"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Voltar às salas
+              </Button>
+            </Link>
 
-          <Button 
-            variant="outline" 
-            className="mb-6 text-gray-600 hover:text-blue-600 border-gray-300 hover:border-blue-300"
-            onClick={handleBackClick}
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Voltar às salas
-          </Button>
-
-          <Button 
-            variant="outline" 
-            className="mb-6 text-gray-600 hover:text-blue-600 border-gray-300 hover:border-blue-300"
-            onClick={() => setIsDialogOpen(true)}
-          >
-            <Ear className="w-4 h-4 mr-2" />
-            Gravar Audio
-          </Button>
+            <Link to="/audio">
+              <Button
+                variant="outline"
+                className="mb-6 text-gray-600 hover:text-blue-600 border-gray-300 hover:border-blue-300"
+              >
+                <Ear className="w-4 h-4 mr-2" />
+                Gravar Audio
+              </Button>
+            </Link>
           </div>
 
           <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
@@ -254,7 +253,7 @@ export function Room() {
                 <div className="space-y-2">
                   <Label htmlFor="question" className="text-gray-700 font-medium flex items-center">
                     <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                    Pergunta 
+                    Pergunta
                   </Label>
                   <textarea
                     id="question"
@@ -355,14 +354,21 @@ export function Room() {
                         <h3 className="text-lg font-semibold text-gray-900 mb-2">Pergunta</h3>
                         <p className="text-gray-700 leading-relaxed">{question.question}</p>
                       </div>
-                      
+
                       {question.answer && question.answer.trim() && (
                         <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                           <h4 className="text-md font-semibold text-blue-600 mb-2">Resposta da IA <BrainCircuit className="inline w-5 h-5 text-blue-600 mr-1" /> </h4>
                           <p className="text-gray-700">{question.answer}</p>
                         </div>
                       )}
-                      
+
+                      {!question.answer && (
+                        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                          <h4 className="text-md font-semibold text-blue-600 mb-2">IA gerando resposta <BrainCircuit className="inline w-5 h-5 text-blue-600 mr-1" /></h4>
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-400"></div>
+                        </div>
+                      )}
+
                       <div className="flex items-center text-sm text-gray-500 pt-2">
                         <Calendar className="w-4 h-4 mr-2" />
                         <span>
@@ -390,8 +396,8 @@ export function Room() {
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Nenhuma pergunta ainda</h3>
               <p className="text-gray-600 mb-6">Seja o primeiro a fazer uma pergunta nesta sala!</p>
-              <Button 
-                onClick={() => setIsDialogOpen(true)} 
+              <Button
+                onClick={() => setIsDialogOpen(true)}
                 className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-2 shadow-lg"
               >
                 <Plus className="w-4 h-4 mr-2" />

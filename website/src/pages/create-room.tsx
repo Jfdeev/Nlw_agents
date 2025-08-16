@@ -161,7 +161,8 @@ export function CreateRoom() {
                     id="room-name"
                     name="name"
                     placeholder="Ex: Discussões sobre React"
-                    className="border-2 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 rounded-lg px-4 py-3 transition-all duration-200 text-gray-600 outline-none"
+                    required
+                    className="border-2 border-gray-200 rounded-lg px-4 py-3 transition-all duration-200 text-gray-600"
                   />
                 </div>
 
