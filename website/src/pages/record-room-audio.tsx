@@ -60,16 +60,16 @@ export function RecordRoomAudio() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
             <div className="flex items-center justify-between">
-                    <Button
-                        variant="outline"
-                        className="mb-6 text-gray-600 hover:text-blue-600 border-gray-300 hover:border-blue-300"
-                        onClick={() => {
-                            window.history.back();
-                        }}
-                    >
-                        <ArrowLeft className="w-4 h-4 mr-2" />
-                        Voltar para a Sala
-                    </Button>
+                <Button
+                    variant="outline"
+                    className="mb-6 text-gray-600 hover:text-blue-600 border-gray-300 hover:border-blue-300"
+                    onClick={() => {
+                        window.history.back();
+                    }}
+                >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Voltar para a Sala
+                </Button>
             </div>
 
             <div className="flex items-center justify-center">
