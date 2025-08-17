@@ -398,7 +398,7 @@ export function Room() {
               <p className="text-gray-600 mb-6">Seja o primeiro a fazer uma pergunta nesta sala!</p>
               <Button
                 onClick={() => setIsDialogOpen(true)}
-                className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-2 shadow-lg"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-2 shadow-lg"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Fazer Primeira Pergunta

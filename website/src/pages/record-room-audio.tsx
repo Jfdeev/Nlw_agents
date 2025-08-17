@@ -1,16 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Ear } from "lucide-react";
 import { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 
 
 const isRecordingSupported = !!navigator.mediaDevices 
 && typeof navigator.mediaDevices.getUserMedia === "function" 
 && typeof window.MediaRecorder === "function";
 
+type RoomParams = {
+    roomId: string;
+}
+
 export function RecordRoomAudio() {
     const [isRecording, setIsRecording] = useState(false);
     const mediaRecorder = useRef<MediaRecorder | null>(null);
+
+    const params = useParams<RoomParams>();
+
 
     function stopRecording() {
         setIsRecording(false);
@@ -18,6 +25,23 @@ export function RecordRoomAudio() {
         if(mediaRecorder.current && mediaRecorder.current.state !== "inactive") {
             mediaRecorder.current.stop();
         }
+
+    }
+    
+    async function uploadAudio(audio: Blob) {
+        const formData = new FormData();
+
+        formData.append("file", audio, 'audio.webm')
+        
+
+        const response = await fetch(`http://localhost:3333/rooms/${params.roomId}/audio`, {
+            method: "POST",
+            body: formData,
+        })
+
+        const result = await response.json();
+
+        console.log("Áudio enviado com sucesso:", result);
     }
 
     async function startRecording() {
@@ -42,7 +66,7 @@ export function RecordRoomAudio() {
 
         mediaRecorder.current.ondataavailable = (event) => {
             if (event.data.size > 0) {
-                console.log("Gravação concluída:", event.data);
+                uploadAudio(event.data);
             }
         }
 
@@ -55,6 +79,10 @@ export function RecordRoomAudio() {
         }
 
         mediaRecorder.current.start();
+    }
+
+    if (!params.roomId) {
+        return <Navigate replace to="//" />;
     }
 
     return (
