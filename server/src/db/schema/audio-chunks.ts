@@ -2,14 +2,15 @@ import {
     pgTable,
     text,
     timestamp,
-    uuid
+    uuid,
+    vector
  } from "drizzle-orm/pg-core";
 import { rooms } from "./rooms.ts";
 
-export const questions = pgTable("questions", {
+export const audioChunks = pgTable("audio_chunks", {
     id: uuid().primaryKey().defaultRandom(),
     roomId: uuid().notNull().references(() => rooms.id),
-    question: text().notNull(),
-    answer: text(),
+    transcription: text().notNull(),
+    embeddings: vector({dimensions: 768}).notNull(),
     createdAt: timestamp().defaultNow().notNull(),
 })

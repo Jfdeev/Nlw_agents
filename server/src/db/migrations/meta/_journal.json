@@ -15,6 +15,13 @@
       "when": 1754573114753,
       "tag": "0001_noisy_hardball",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1755479722322,
+      "tag": "0002_ancient_makkari",
+      "breakpoints": true
     }
   ]
 }
