@@ -174,7 +174,7 @@ export function Room() {
               </Button>
             </Link>
 
-            <Link to="/audio">
+            <Link to={`/audio/${room.id}`}>
               <Button
                 variant="outline"
                 className="mb-6 text-gray-600 hover:text-blue-600 border-gray-300 hover:border-blue-300"

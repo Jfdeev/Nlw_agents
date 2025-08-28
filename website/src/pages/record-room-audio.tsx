@@ -9,7 +9,7 @@ const isRecordingSupported = !!navigator.mediaDevices
 && typeof window.MediaRecorder === "function";
 
 type RoomParams = {
-    roomId: string;
+    id: string;
 }
 
 export function RecordRoomAudio() {
@@ -34,7 +34,7 @@ export function RecordRoomAudio() {
         formData.append("file", audio, 'audio.webm')
         
 
-        const response = await fetch(`http://localhost:3333/rooms/${params.roomId}/audio`, {
+        const response = await fetch(`http://localhost:3333/rooms/${params.id}/audio`, {
             method: "POST",
             body: formData,
         })
@@ -81,8 +81,8 @@ export function RecordRoomAudio() {
         mediaRecorder.current.start();
     }
 
-    if (!params.roomId) {
-        return <Navigate replace to="//" />;
+    if (!params.id) {
+        return <Navigate replace to="/" />;
     }
 
     return (
