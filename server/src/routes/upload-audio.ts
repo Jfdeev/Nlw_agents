@@ -1,6 +1,6 @@
 import { FastifyPluginCallbackZod } from 'fastify-type-provider-zod'
 import { z } from 'zod/v4'
-import { transcribeAudio } from '../services/gemini.ts'
+import { generateEmbeddings, transcribeAudio } from '../services/gemini.ts'
 import { db } from '../db/connection.ts'
 import { schema } from '../db/schema/index.ts'
 
@@ -26,12 +26,29 @@ export const uploadAudioRoute: FastifyPluginCallbackZod = (app) => {
             const mimeType = audio.mimetype;
 
             const transcription = await transcribeAudio(audioBase64, mimeType);
+            const embeddings = await generateEmbeddings(transcription);
 
             if (!transcription) {
                 return reply.status(500).send({ error: 'Failed to transcribe audio' });
             }
 
-            return { transcription }
+            if (!embeddings) {
+                return reply.status(500).send({ error: 'Failed to generate embeddings' });
+            }
+
+            const result = await db.insert(schema.audioChunks).values({
+                roomId,
+                transcription,
+                embeddings
+            }).returning();
+
+            const chunk = result[0];
+
+            if (!chunk) {
+                return reply.status(500).send({ error: 'Failed to save audio chunk' });
+            }
+
+            return reply.status(201).send({ chunkId: chunk.id });
 
             // 2. Gerar vetor semantico (embeddings)
             // 3. Armazenar os vetores no banco de dados

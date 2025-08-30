@@ -18,7 +18,6 @@ export function RecordRoomAudio() {
 
     const params = useParams<RoomParams>();
 
-
     function stopRecording() {
         setIsRecording(false);
 

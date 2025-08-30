@@ -48,5 +48,5 @@ export async function generateEmbeddings(text: string) {
         throw new Error("Erro ao gerar os embeddings");
     }
 
-    return response.embeddings;
+    return response.embeddings[0].values;
 }
