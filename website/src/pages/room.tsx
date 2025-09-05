@@ -87,15 +87,14 @@ export function Room() {
   });
 
   // Mutation para criar pergunta
-  const createQuestionMutation = useMutation<CreateQuestionResponse, Error, { question: string; answer?: string }>({
-    mutationFn: async (payload: { question: string; answer?: string }) => {
+  const createQuestionMutation = useMutation<CreateQuestionResponse, Error, { question: string; }>({
+    mutationFn: async (payload: { question: string; }) => {
       const res = await fetch("http://localhost:3333/questions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           roomId,
           question: payload.question,
-          answer: payload.answer || ""
         })
       });
       if (!res.ok) {
@@ -124,7 +123,6 @@ export function Room() {
 
     await createQuestionMutation.mutateAsync({
       question: questionText.trim(),
-      answer: answerText.trim() || undefined
     });
   };
 
@@ -265,20 +263,6 @@ export function Room() {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="answer" className="text-gray-700 font-medium flex items-center">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                    Resposta (opcional)
-                  </Label>
-                  <textarea
-                    id="answer"
-                    value={answerText}
-                    onChange={(e) => setAnswerText(e.target.value)}
-                    placeholder="Se você já tem uma resposta, compartilhe aqui..."
-                    rows={4}
-                    className="w-full border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-green-500/20 rounded-lg px-4 py-3 resize-none transition-all duration-200 outline-none text-gray-600"
-                  />
-                </div>
 
                 <DialogFooter className="flex gap-3 pt-4">
                   <DialogClose asChild>
