@@ -15,6 +15,7 @@ import { createQuestionRoute } from './routes/create-question.ts';
 import { getRoomRoute } from './routes/get-room.ts';
 import { getQuestionsByRoomRoute } from './routes/get-questions-by-room.ts'
 import { uploadAudioRoute } from './routes/upload-audio.ts';
+import { createRoomFromAudioRoute } from './routes/create-room-from-audio.ts';
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -39,6 +40,7 @@ app.get('/health', () =>{
 
 app.register(getRooms);
 app.register(createRoomRoute);
+app.register(createRoomFromAudioRoute);
 app.register(createQuestionRoute);
 app.register(getRoomRoute);
 app.register(getQuestionsByRoomRoute);

@@ -111,97 +111,66 @@ Responda de forma educativa e clara:`.trim();
   return response.text;
 }
 
-// Nova função para gerar metadados da sala baseado na transcrição
-export async function generateRoomMetadata(transcription: string) {
-  const prompt = `Analise a seguinte transcrição de uma aula e gere metadados estruturados.
-
-TRANSCRIÇÃO: ${transcription}
-
-INSTRUÇÕES:
-1. Identifique o tema principal da aula
-2. Crie um título atrativo e específico (máximo 60 caracteres)
-3. Escreva uma descrição clara e informativa (máximo 200 caracteres)
-4. Liste os principais tópicos abordados
-
-RESPONDA EXATAMENTE neste formato JSON (sem formatação markdown):
-{
-  "suggestedTitle": "Título específico da aula baseado no conteúdo real",
-  "suggestedDescription": "Descrição clara dos conceitos e temas abordados na aula",
-  "mainTopic": "Área principal de conhecimento",
-  "keyTopics": ["tópico1", "tópico2", "tópico3"]
-}
-
-EXEMPLOS DE BONS TÍTULOS:
-- "Banco de Dados: Normalização e Dependências Funcionais"
-- "JavaScript: Arrays e Métodos de Iteração" 
-- "Matemática: Função Quadrática e Parábolas"
-
-Baseie-se apenas no conteúdo real da transcrição:`;
-
-  const response = await gemini.models.generateContent({
-    model,
-    contents: [{ text: prompt }]
+export async function generateRoomInfo(transcription: string) {
+  const { GoogleGenAI } = await import('@google/genai');
+  const { env } = await import('../env.ts');
+  
+  const gemini = new GoogleGenAI({
+    apiKey: env.GEMINI_API_KEY,
   });
 
-  if (!response.text) {
-    throw new Error("Erro ao gerar metadados da sala");
-  }
+  const prompt = `Com base na transcrição de áudio fornecida, gere um título e descrição para uma sala de estudos/discussão.
+
+TRANSCRIÇÃO: ${transcription.substring(0, 2000)}...
+
+INSTRUÇÕES:
+1. Analise o conteúdo e identifique o tema principal
+2. Crie um TÍTULO conciso e atrativo (máximo 20 caracteres)
+3. Crie uma DESCRIÇÃO informativa (máximo 50 caracteres)
+4. Use linguagem acadêmica mas acessível
+5. Responda APENAS no formato JSON:
+
+{
+  "title": "Título da sala aqui",
+  "description": "Descrição da sala aqui"
+}
+
+Responda apenas o JSON, sem texto adicional:`.trim();
 
   try {
-    // Limpar possível formatação markdown
-    const cleanedText = response.text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    const metadata = JSON.parse(cleanedText);
-    
-    // Validar campos essenciais
-    if (!metadata.suggestedTitle || !metadata.suggestedDescription) {
-      throw new Error("Metadata incompleta");
+    const response = await gemini.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: [{ text: prompt }]
+    });
+
+    if (!response.text) {
+      throw new Error('No response from AI');
     }
+
+    // Limpa a resposta e tenta fazer parse do JSON
+    const cleanResponse = response.text.trim().replace(/```json\n?|\n?```/g, '');
+    const roomInfo = JSON.parse(cleanResponse);
     
-    // Limitar tamanhos
-    metadata.suggestedTitle = metadata.suggestedTitle.substring(0, 60);
-    metadata.suggestedDescription = metadata.suggestedDescription.substring(0, 200);
+    // Valida se tem os campos necessários
+    if (!roomInfo.title || !roomInfo.description) {
+      throw new Error('Invalid room info format');
+    }
+
+    return {
+      title: roomInfo.title.substring(0, 100), // Limita o tamanho
+      description: roomInfo.description.substring(0, 300) // Limita o tamanho
+    };
+
+  } catch (error) {
+    console.error('Error generating room info:', error);
     
-    console.log('✅ Generated metadata:', metadata);
-    return metadata;
-    
-  } catch (parseError) {
-    console.warn('⚠️ Failed to parse AI metadata response:', parseError);
-    console.log('📝 Raw response:', response.text);
-    
-    // Fallback mais inteligente baseado na transcrição
-    const fallbackTitle = generateFallbackTitle(transcription);
-    const fallbackDescription = generateFallbackDescription(transcription);
+    // Fallback: gera título e descrição básicos
+    const words = transcription.split(' ').slice(0, 10);
+    const preview = words.join(' ');
     
     return {
-      suggestedTitle: fallbackTitle,
-      suggestedDescription: fallbackDescription,
-      mainTopic: "Educação",
-      keyTopics: ["Aprendizado", "Conteúdo Educativo"]
+      title: `Aula sobre ${preview.substring(0, 50)}...`,
+      description: `Sala criada automaticamente com base no conteúdo da aula. Discussão sobre: ${preview.substring(0, 150)}...`
     };
   }
-}
-
-// Funções auxiliares para fallback
-function generateFallbackTitle(transcription: string): string {
-  const words = transcription.toLowerCase();
-  
-  // Detectar temas comuns
-  if (words.includes('banco de dados') || words.includes('tabela') || words.includes('sql')) {
-    return "Aula sobre Banco de Dados";
-  } else if (words.includes('javascript') || words.includes('função') || words.includes('array')) {
-    return "Aula de JavaScript";
-  } else if (words.includes('matemática') || words.includes('equação') || words.includes('função')) {
-    return "Aula de Matemática";
-  } else if (words.includes('física') || words.includes('força') || words.includes('energia')) {
-    return "Aula de Física";
-  } else if (words.includes('química') || words.includes('reação') || words.includes('elemento')) {
-    return "Aula de Química";
-  } else {
-    return "Conteúdo Educativo";
-  }
-}
-
-function generateFallbackDescription(transcription: string): string {
-  const preview = transcription.substring(0, 150);
-  return `Aula baseada no conteúdo: ${preview}...`;
 }

@@ -54,6 +54,7 @@ export function Room() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [questionText, setQuestionText] = useState("");
   const [answerText, setAnswerText] = useState("");
+  const [expandedAnswers, setExpandedAnswers] = useState<Set<string>>(new Set());
   const params = useParams();
 
   const roomId = params.id;
@@ -324,51 +325,84 @@ export function Room() {
           {/* Questions List */}
           {questions && questions.length > 0 && (
             <div className="space-y-6">
-              {questions.map((question) => (
-                <div
-                  key={question.id}
-                  className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-200"
-                >
-                  <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <MessageCircleQuestion className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div className="flex-1 space-y-3">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Pergunta</h3>
-                        <p className="text-gray-700 leading-relaxed">{question.question}</p>
+              {questions.map((question) => {
+                const maxAnswerLength = 300;
+                const isAnswerLong = question.answer && question.answer.length > maxAnswerLength;
+                const isExpanded = expandedAnswers.has(question.id);
+                const displayAnswer = isAnswerLong && !isExpanded 
+                  ? question.answer.substring(0, maxAnswerLength) + "..."
+                  : question.answer;
+
+                const toggleAnswer = () => {
+                  const newExpanded = new Set(expandedAnswers);
+                  if (isExpanded) {
+                    newExpanded.delete(question.id);
+                  } else {
+                    newExpanded.add(question.id);
+                  }
+                  setExpandedAnswers(newExpanded);
+                };
+
+                return (
+                  <div
+                    key={question.id}
+                    className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-200"
+                  >
+                    <div className="flex items-start space-x-4">
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <MessageCircleQuestion className="w-5 h-5 text-blue-600" />
                       </div>
-
-                      {question.answer && question.answer.trim() && (
-                        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                          <h4 className="text-md font-semibold text-blue-600 mb-2">Resposta da IA <BrainCircuit className="inline w-5 h-5 text-blue-600 mr-1" /> </h4>
-                          <p className="text-gray-700">{question.answer}</p>
+                      <div className="flex-1 space-y-3">
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">Pergunta</h3>
+                          <p className="text-gray-700 leading-relaxed">{question.question}</p>
                         </div>
-                      )}
 
-                      {!question.answer && (
-                        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                          <h4 className="text-md font-semibold text-blue-600 mb-2">IA gerando resposta <BrainCircuit className="inline w-5 h-5 text-blue-600 mr-1" /></h4>
-                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-400"></div>
+                        {question.answer && question.answer.trim() ? (
+                          <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <h4 className="text-md font-semibold text-blue-600 mb-2 flex items-center">
+                              <BrainCircuit className="w-5 h-5 text-blue-600 mr-2" />
+                              Resposta da IA
+                            </h4>
+                            <div className="text-gray-700 leading-relaxed">
+                              {displayAnswer}
+                              {isAnswerLong && (
+                                <button 
+                                  onClick={toggleAnswer}
+                                  className="text-blue-500 hover:text-blue-700 cursor-pointer ml-1 font-medium text-sm transition-colors duration-200"
+                                >
+                                  {isExpanded ? ' ver menos' : ' ver mais'}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <h4 className="text-md font-semibold text-blue-600 mb-2 flex items-center">
+                              <BrainCircuit className="w-5 h-5 text-blue-600 mr-2" />
+                              IA gerando resposta
+                            </h4>
+                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-400"></div>
+                          </div>
+                        )}
+
+                        <div className="flex items-center text-sm text-gray-500 pt-2">
+                          <Calendar className="w-4 h-4 mr-2" />
+                          <span>
+                            {new Date(question.createdAt).toLocaleDateString("pt-BR", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit"
+                            })}
+                          </span>
                         </div>
-                      )}
-
-                      <div className="flex items-center text-sm text-gray-500 pt-2">
-                        <Calendar className="w-4 h-4 mr-2" />
-                        <span>
-                          {new Date(question.createdAt).toLocaleDateString("pt-BR", {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit"
-                          })}
-                        </span>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 

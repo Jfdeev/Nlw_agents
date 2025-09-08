@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Calendar, Users, Plus, X } from "lucide-react";
+import { Calendar, Users, Plus, X, Mic } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
@@ -104,112 +104,131 @@ export function CreateRoom() {
         </div>
 
         {/* Create Room Dialog */}
-        <div className="text-center">
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button
-                onClick={() => setIsDialogOpen(true)}
-                className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-8 py-3 mb-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-              >
-                <Plus className="w-5 h-5 mr-2" />
-                Criar Nova Sala
-              </Button>
-            </DialogTrigger>
-
-            <DialogContent className="max-w-md mx-auto bg-white border-0 shadow-2xl rounded-2xl overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4 relative">
-                <DialogHeader>
-                  <DialogTitle className="text-2xl font-bold text-white flex items-center">
-                    <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
-                      <Plus className="w-4 h-4 text-white" />
-                    </div>
-                    Criar Nova Sala
-                  </DialogTitle>
-                  <DialogDescription className="text-blue-100 mt-2">
-                    Preencha os detalhes para criar uma sala de perguntas incrível
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogClose asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="absolute top-4 right-4 text-white hover:bg-white/20 rounded-full w-8 h-8 p-0"
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
-                </DialogClose>
-              </div>
-
-              <form
-                className="p-6 space-y-6"
-                onSubmit={async (event) => {
-                  event.preventDefault();
-                  const form = event.currentTarget as HTMLFormElement;
-                  await handleCreateRoom(form);
-                  // reset do formulário após sucesso (opcional)
-                  if (!createRoomMutation.isError) {
-                    form.reset();
-                  }
-                }}
-              >
-                <div className="space-y-2">
-                  <Label htmlFor="room-name" className="text-gray-700 font-medium flex items-center">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                    Nome da Sala
-                  </Label>
-                  <Input
-                    id="room-name"
-                    name="name"
-                    placeholder="Ex: Discussões sobre React"
-                    required
-                    className="border-2 border-gray-200 rounded-lg px-4 py-3 transition-all duration-200 text-gray-600"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="room-description" className="text-gray-700 font-medium flex items-center">
-                    <div className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></div>
-                    Descrição
-                  </Label>
-                  <textarea
-                    id="room-description"
-                    name="description"
-                    placeholder="Descreva sobre o que será discutido nesta sala..."
-                    rows={3}
-                    className="w-full border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg px-4 py-3 resize-none transition-all duration-200 outline-none text-gray-600"
-                  />
-                </div>
-
-                <DialogFooter className="flex gap-3 pt-4">
+        <div className="text-center mb-8">
+          <div className="flex gap-4 justify-center">
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  onClick={() => setIsDialogOpen(true)}
+                  className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  Criar Nova Sala
+                </Button>
+              </DialogTrigger>
+              
+              {/* Dialog content remains the same */}
+              <DialogContent className="max-w-md mx-auto bg-white border-0 shadow-2xl rounded-2xl overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4 relative">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-bold text-white flex items-center">
+                      <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                        <Plus className="w-4 h-4 text-white" />
+                      </div>
+                      Criar Nova Sala
+                    </DialogTitle>
+                    <DialogDescription className="text-blue-100 mt-2">
+                      Preencha os detalhes para criar uma sala de perguntas incrível
+                    </DialogDescription>
+                  </DialogHeader>
                   <DialogClose asChild>
                     <Button
-                      type="button"
-                      variant="outline"
-                      className="flex-1 text-gray-600 hover:text-blue-600 py-3 rounded-lg transition-all duration-200"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute top-4 right-4 text-white hover:bg-white/20 rounded-full w-8 h-8 p-0"
                     >
-                      Cancelar
+                      <X className="w-4 h-4" />
                     </Button>
                   </DialogClose>
+                </div>
 
-                  <Button
-                    type="submit"
-                    className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                    disabled={createRoomMutation.isPending}
-                  >
-                    {createRoomMutation.isPending ? (
-                      // simples indicador
-                      <>Criando...</>
-                    ) : (
-                      <>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Criar Sala
-                      </>
-                    )}
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+                <form
+                  className="p-6 space-y-6"
+                  onSubmit={async (event) => {
+                    event.preventDefault();
+                    const form = event.currentTarget as HTMLFormElement;
+                    await handleCreateRoom(form);
+                    // reset do formulário após sucesso (opcional)
+                    if (!createRoomMutation.isError) {
+                      form.reset();
+                    }
+                  }}
+                >
+                  <div className="space-y-2">
+                    <Label htmlFor="room-name" className="text-gray-700 font-medium flex items-center">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                      Nome da Sala
+                    </Label>
+                    <Input
+                      id="room-name"
+                      name="name"
+                      placeholder="Ex: Discussões sobre React"
+                      required
+                      className="border-2 border-gray-200 rounded-lg px-4 py-3 transition-all duration-200 text-gray-600"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="room-description" className="text-gray-700 font-medium flex items-center">
+                      <div className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></div>
+                      Descrição
+                    </Label>
+                    <textarea
+                      id="room-description"
+                      name="description"
+                      placeholder="Descreva sobre o que será discutido nesta sala..."
+                      rows={3}
+                      className="w-full border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 rounded-lg px-4 py-3 resize-none transition-all duration-200 outline-none text-gray-600"
+                    />
+                  </div>
+
+                  <DialogFooter className="flex gap-3 pt-4">
+                    <DialogClose asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="flex-1 text-gray-600 hover:text-blue-600 py-3 rounded-lg transition-all duration-200"
+                      >
+                        Cancelar
+                      </Button>
+                    </DialogClose>
+
+                    <Button
+                      type="submit"
+                      className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                      disabled={createRoomMutation.isPending}
+                    >
+                      {createRoomMutation.isPending ? (
+                        // simples indicador
+                        <>Criando...</>
+                      ) : (
+                        <>
+                          <Plus className="w-4 h-4 mr-2" />
+                          Criar Sala
+                        </>
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+
+            {/* New button for creating room from audio */}
+            <Link to="/create-from-audio">
+              <Button
+                className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <Mic className="w-5 h-5 mr-2" />
+                Criar com Áudio
+              </Button>
+            </Link>
+          </div>
+
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-6 max-w-2xl mx-auto">
+            <p className="text-green-800 font-medium">
+              Agora é possivel criar salas automaticamente a partir de gravações de áudio! <br />Com isso sendo possivel extrair o contexto da conversa e criar salas interativas com esse contexto sem precisar alimentar a sala com os audios.
+            </p>
+          </div>
         </div>
 
         {/* Rooms Section */}
