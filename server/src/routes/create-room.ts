@@ -7,7 +7,7 @@ export const createRoomRoute: FastifyPluginCallbackZod = (app) => {
     app.post('/rooms', {
         schema: {
             body: z.object({
-                name: z.string().min(1, { message: 'Name is required' }),
+                name: z.string().min(1),
                 description: z.string().optional(),
             })
         }
@@ -19,7 +19,6 @@ export const createRoomRoute: FastifyPluginCallbackZod = (app) => {
                 name,
                 description: description ?? '',
             }).returning()
-
 
             const insertRoom = result[0]
 

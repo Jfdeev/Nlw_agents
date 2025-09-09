@@ -125,8 +125,8 @@ TRANSCRIÇÃO: ${transcription.substring(0, 2000)}...
 
 INSTRUÇÕES:
 1. Analise o conteúdo e identifique o tema principal
-2. Crie um TÍTULO conciso e atrativo (máximo 20 caracteres)
-3. Crie uma DESCRIÇÃO informativa (máximo 50 caracteres)
+2. Crie um TÍTULO conciso e atrativo (máximo 15 caracteres)
+3. Crie uma DESCRIÇÃO informativa (máximo 30 caracteres)
 4. Use linguagem acadêmica mas acessível
 5. Responda APENAS no formato JSON:
 

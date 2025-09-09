@@ -97,7 +97,7 @@ export function CreateRoom() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">Let me Ask</h1>
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">Whisper</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Descubra salas incríveis para fazer suas perguntas ou criar a sua própria
           </p>
