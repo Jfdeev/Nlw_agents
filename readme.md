@@ -280,7 +280,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para de
 
 ## 👥 Autores
 
-- **Seu Nome** - *Desenvolvimento inicial* - [@seu-github](https://github.com/seu-usuario)
+- **Seu Nome** - *Desenvolvimento inicial* - [@Jfdeev](https://github.com/Jfdeev)
 
 ## 🙏 Agradecimentos
 
@@ -288,13 +288,6 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para de
 - Comunidade open source pelas ferramentas incríveis
 - Todos os contribuidores do projeto
 
-## 📞 Suporte
-
-- 📧 Email: suporte@whisper.dev
-- 💬 Discord: [Comunidade Whisper](https://discord.gg/whisper)
-- 🐛 Issues: [GitHub Issues](https://github.com/seu-usuario/whisper/issues)
-
----
 
 <div align="center">
 
