@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -10,7 +10,6 @@ import {
   DialogTrigger
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -21,7 +20,6 @@ import {
   Calendar,
   X,
   Users,
-  CheckCircle2,
   AlertCircle,
   BrainCircuit,
   Ear
@@ -49,12 +47,20 @@ type CreateQuestionResponse = {
   questionId: string;
 };
 
+type PendingQuestion = {
+  id: string;
+  question: string;
+  createdAt: string;
+  isLoading: true;
+};
+
 export function Room() {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [questionText, setQuestionText] = useState("");
-  const [answerText, setAnswerText] = useState("");
   const [expandedAnswers, setExpandedAnswers] = useState<Set<string>>(new Set());
+  const [pendingQuestion, setPendingQuestion] = useState<PendingQuestion | null>(null);
+
   const params = useParams();
 
   const roomId = params.id;
@@ -87,34 +93,64 @@ export function Room() {
     }
   });
 
+  const allQuestions = useMemo(() => {
+    const realQuestions = questions || [];
+    if (pendingQuestion) {
+      return [pendingQuestion, ...realQuestions];
+    }
+    return realQuestions;
+  }, [questions, pendingQuestion]);
+
   // Mutation para criar pergunta
   const createQuestionMutation = useMutation<CreateQuestionResponse, Error, { question: string; }>({
-    mutationFn: async (payload: { question: string; }) => {
-      const res = await fetch("http://localhost:3333/questions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          roomId,
-          question: payload.question,
-        })
-      });
-      if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        throw new Error(`Falha ao criar pergunta: ${res.status} ${text}`);
-      }
-      return res.json();
-    },
-    onSuccess: () => {
-      toast.success("Pergunta criada com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["get-questions", roomId] });
-      setIsDialogOpen(false);
-      setQuestionText("");
-      setAnswerText("");
-    },
-    onError: (err) => {
-      toast.error(err.message || "Erro ao criar pergunta");
+  mutationFn: async (payload: { question: string; }) => {
+    const res = await fetch("http://localhost:3333/questions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        roomId,
+        question: payload.question,
+      })
+    });
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`Falha ao criar pergunta: ${res.status} ${text}`);
     }
-  });
+    return res.json();
+  },
+  onMutate: async (variables) => {
+    // Criar pergunta temporária com loading
+    const tempQuestion = {
+      id: `temp-${Date.now()}`,
+      question: variables.question,
+      createdAt: new Date().toISOString(),
+      isLoading: true as const
+    };
+    
+    setPendingQuestion(tempQuestion);
+    
+    // Fechar dialog imediatamente
+    setIsDialogOpen(false);
+    setQuestionText("");
+    
+    return { tempQuestion };
+  },
+  onSuccess: () => {
+    toast.success("Pergunta criada com sucesso!");
+    
+    // Remover pergunta temporária
+    setPendingQuestion(null);
+    
+    // Revalidar queries para mostrar a pergunta real
+    queryClient.invalidateQueries({ queryKey: ["get-questions", roomId] });
+  },
+  onError: (err) => {
+    toast.error(err.message || "Erro ao criar pergunta");
+    
+    // Remover pergunta temporária em caso de erro
+    setPendingQuestion(null);
+  }
+});
 
   const handleCreateQuestion = async () => {
     if (!questionText.trim()) {
@@ -323,15 +359,18 @@ export function Room() {
           )}
 
           {/* Questions List */}
-          {questions && questions.length > 0 && (
+          {allQuestions && allQuestions.length > 0 && (
             <div className="space-y-6">
-              {questions.map((question) => {
+              {allQuestions.map((question) => {
+                const isPendingQuestion = 'isLoading' in question;
+                const hasAnswer = !isPendingQuestion && 'answer' in question && question.answer;
+                
                 const maxAnswerLength = 300;
-                const isAnswerLong = question.answer && question.answer.length > maxAnswerLength;
+                const isAnswerLong = hasAnswer && question.answer && question.answer.length > maxAnswerLength;
                 const isExpanded = expandedAnswers.has(question.id);
                 const displayAnswer = isAnswerLong && !isExpanded 
-                  ? question.answer.substring(0, maxAnswerLength) + "..."
-                  : question.answer;
+                  ? question.answer!.substring(0, maxAnswerLength) + "..."
+                  : hasAnswer ? question.answer : '';
 
                 const toggleAnswer = () => {
                   const newExpanded = new Set(expandedAnswers);
@@ -358,7 +397,7 @@ export function Room() {
                           <p className="text-gray-700 leading-relaxed">{question.question}</p>
                         </div>
 
-                        {question.answer && question.answer.trim() ? (
+                        {hasAnswer && question.answer && question.answer.trim() ? (
                           <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                             <h4 className="text-md font-semibold text-blue-600 mb-2 flex items-center">
                               <BrainCircuit className="w-5 h-5 text-blue-600 mr-2" />

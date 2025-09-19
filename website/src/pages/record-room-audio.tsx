@@ -240,13 +240,13 @@ export function RecordRoomAudio() {
                                     <div className="mb-6">
                                         <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                                             <h4 className="text-md font-semibold text-gray-700 mb-3 flex items-center justify-center">
-                                                🎧 Preview do áudio
+                                                Preview do áudio
                                             </h4>
                                             <div className="flex justify-center">
                                                 <Button
                                                     onClick={togglePlayPause}
                                                     variant="outline"
-                                                    className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50"
+                                                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white"
                                                 >
                                                     {isPlaying ? (
                                                         <>
@@ -268,7 +268,7 @@ export function RecordRoomAudio() {
                                         <Button
                                             onClick={resetRecording}
                                             variant="outline"
-                                            className="px-6 py-2"
+                                            className="px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg"
                                         >
                                             Gravar novamente
                                         </Button>
