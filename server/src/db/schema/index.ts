@@ -2,9 +2,12 @@
 import { audioChunks } from './audio-chunks.ts';
 import { questions } from './questions.ts';
 import { rooms } from './rooms.ts';
+import { activities, activityResponses } from './activities.ts';
 
 export const schema = {
     rooms,
     questions,
-    audioChunks
+    audioChunks,
+    activities,
+    activityResponses
 }
