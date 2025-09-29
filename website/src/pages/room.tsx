@@ -23,7 +23,8 @@ import {
   AlertCircle,
   BrainCircuit,
   Ear,
-  Clock
+  Clock,
+  FileText
 } from "lucide-react";
 import { toast } from "sonner";
 import { Link, useParams, useNavigate } from "react-router-dom";
@@ -62,6 +63,8 @@ export function Room() {
   const [questionText, setQuestionText] = useState("");
   const [expandedAnswers, setExpandedAnswers] = useState<Set<string>>(new Set());
   const [pendingQuestion, setPendingQuestion] = useState<PendingQuestion | null>(null);
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
+  const [showSummaryModal, setShowSummaryModal] = useState(false);
 
   const params = useParams();
 
@@ -191,6 +194,21 @@ export function Room() {
     }
   });
 
+  // Função para simular geração de resumo (mocada com erro)
+  const handleGenerateSummary = async () => {
+    setIsGeneratingSummary(true);
+    setShowSummaryModal(true);
+    
+    // Simular delay de processamento
+    setTimeout(() => {
+      setIsGeneratingSummary(false);
+      toast.error("⚠️ Funcionalidade temporariamente indisponível", {
+        description: "Estamos trabalhando para implementar a geração de resumos. Tente novamente em breve!",
+        duration: 5000,
+      });
+    }, 3000);
+  };
+
   const handleCreateQuestion = async () => {
     if (!questionText.trim()) {
       toast.error("Pergunta é obrigatória");
@@ -316,9 +334,109 @@ export function Room() {
                 <BrainCircuit className="w-4 h-4" />
                 <span>{createActivityMutation.isPending ? "Criando..." : "Criar Atividade"}</span>
               </Button>
+              
+              <Button 
+                onClick={handleGenerateSummary}
+                disabled={isGeneratingSummary}
+                variant="outline"
+                className="flex items-center space-x-2 border-orange-200 text-orange-700 hover:bg-orange-50 hover:border-orange-300"
+              >
+                <FileText className="w-4 h-4" />
+                <span>{isGeneratingSummary ? "Gerando..." : "Gerar Resumo"}</span>
+              </Button>
             </div>
           </div>
         </div>
+
+        {/* Modal de Gerar Resumo */}
+        <Dialog open={showSummaryModal} onOpenChange={setShowSummaryModal}>
+          <DialogContent className="max-w-md mx-auto bg-white border-0 shadow-2xl rounded-2xl overflow-hidden">
+            <div className="bg-gradient-to-r from-orange-500 to-amber-600 px-6 py-4 relative">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold text-white flex items-center">
+                  <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                    <FileText className="w-4 h-4 text-white" />
+                  </div>
+                  Gerando Resumo
+                </DialogTitle>
+                <DialogDescription className="text-orange-100 mt-2">
+                  {isGeneratingSummary 
+                    ? "Nossa IA está analisando o conteúdo da sala..." 
+                    : "Processo finalizado"}
+                </DialogDescription>
+              </DialogHeader>
+              <DialogClose asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute top-4 right-4 text-white hover:bg-white/20 rounded-full w-8 h-8 p-0"
+                  onClick={() => setShowSummaryModal(false)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </DialogClose>
+            </div>
+
+            <div className="p-6">
+              {isGeneratingSummary ? (
+                <div className="text-center space-y-4">
+                  <div className="flex items-center justify-center">
+                    <div className="relative">
+                      <div className="w-16 h-16 border-4 border-orange-200 rounded-full animate-spin border-t-orange-500"></div>
+                      <FileText className="w-6 h-6 text-orange-500 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-semibold text-gray-900">Processando Conteúdo</h3>
+                    <div className="space-y-1">
+                      <div className="flex items-center text-sm text-gray-600">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                        Analisando transcrições dos áudios...
+                      </div>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2 animate-pulse"></div>
+                        Identificando pontos principais...
+                      </div>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></div>
+                        Gerando resumo estruturado...
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center space-y-4">
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+                    <AlertCircle className="w-8 h-8 text-red-500" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-semibold text-gray-900">Funcionalidade em Desenvolvimento</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      Estamos trabalhando para implementar a geração automática de resumos. 
+                      Esta funcionalidade estará disponível em breve!
+                    </p>
+                  </div>
+                  
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <p className="text-sm text-blue-800">
+                      <strong>Em breve:</strong> Resumos automáticos com pontos principais, 
+                      tópicos discutidos e insights gerados por IA.
+                    </p>
+                  </div>
+                  
+                  <Button
+                    onClick={() => setShowSummaryModal(false)}
+                    className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white"
+                  >
+                    Entendi
+                  </Button>
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Activities Section */}
         {activities && activities.length > 0 && (
