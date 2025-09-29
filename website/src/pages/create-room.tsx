@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Calendar, Mic, Plus, Trash2, Users, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -101,6 +101,12 @@ export function CreateRoom() {
       toast.error(err.message || "Erro ao deletar sala");
     },
   });
+
+  useEffect(() => {
+    if (!deleteRoomMutation.isPending) {
+      queryClient.invalidateQueries({ queryKey: ["get-rooms"] });
+    }
+  }, [deleteRoomMutation.isPending, queryClient]);
 
   const handleCreateRoom = async (form: HTMLFormElement) => {
     const formData = new FormData(form);
