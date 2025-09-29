@@ -18,17 +18,17 @@ export const deleteRoomRoute: FastifyPluginCallbackZod = (app) => {
       const { roomId } = request.params;
 
       try {
-        // Primeiro, deletar todas as perguntas da sala
+        // Delete all questions from the room
         await db
           .delete(schema.questions)
           .where(eq(schema.questions.roomId, roomId));
 
-        // Depois, deletar todos os chunks de áudio da sala
+        // Delete all audio chunks from the room
         await db
           .delete(schema.audioChunks)
           .where(eq(schema.audioChunks.roomId, roomId));
 
-        // Por último, deletar a sala
+        // Finally, delete the room
         const result = await db
           .delete(schema.rooms)
           .where(eq(schema.rooms.id, roomId))

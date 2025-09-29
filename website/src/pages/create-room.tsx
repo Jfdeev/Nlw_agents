@@ -85,10 +85,12 @@ export function CreateRoom() {
       const res = await fetch(`http://localhost:3333/rooms/${roomId}`, {
         method: "DELETE",
       });
+
       if (!res.ok) {
         const text = await res.text().catch(() => "");
         throw new Error(`Falha ao deletar sala: ${res.status} ${text}`);
       }
+
       return res.json();
     },
     onSuccess: () => {
@@ -316,6 +318,7 @@ export function CreateRoom() {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
+                          
                           if (
                             confirm(
                               `Tem certeza que deseja deletar a sala "${room.name}"? Esta ação não pode ser desfeita.`

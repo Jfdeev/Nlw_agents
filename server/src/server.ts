@@ -21,6 +21,8 @@ const app = fastify().withTypeProvider<ZodTypeProvider>();
 
 app.register(fastifyCors, {
   origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 });
 
 app.register(fastifyMultipart, {
