@@ -16,6 +16,11 @@ import { getQuestionsByRoomRoute } from "./routes/get-questions-by-room.ts";
 import { getRoomRoute } from "./routes/get-room.ts";
 import { getRooms } from "./routes/get-rooms.ts";
 import { uploadAudioRoute } from "./routes/upload-audio.ts";
+import { createActivityRoute } from "./routes/create-activity.ts";
+import { getActivitiesRoute } from "./routes/get-activities.ts";
+import { getActivityRoute } from "./routes/get-activity.ts";
+import { submitActivityRoute } from "./routes/submit-activity.ts";
+import { deleteActivityRoute } from "./routes/delete-activity.ts";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -46,6 +51,11 @@ app.register(getRoomRoute);
 app.register(getQuestionsByRoomRoute);
 app.register(uploadAudioRoute);
 app.register(deleteRoomRoute);
+app.register(createActivityRoute);
+app.register(getActivitiesRoute);
+app.register(getActivityRoute);
+app.register(submitActivityRoute);
+app.register(deleteActivityRoute);
 
 app.listen({ port: env.PORT }).then(() => {
   console.log(`Server is running on http://localhost:${env.PORT}`);

@@ -22,10 +22,11 @@ import {
   Users,
   AlertCircle,
   BrainCircuit,
-  Ear
+  Ear,
+  Clock
 } from "lucide-react";
 import { toast } from "sonner";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 
 type Room = {
@@ -56,6 +57,7 @@ type PendingQuestion = {
 
 export function Room() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [questionText, setQuestionText] = useState("");
   const [expandedAnswers, setExpandedAnswers] = useState<Set<string>>(new Set());
@@ -89,6 +91,18 @@ export function Room() {
     queryFn: async () => {
       const res = await fetch(`http://localhost:3333/rooms/${roomId}/questions`);
       if (!res.ok) throw new Error("Erro ao buscar perguntas");
+      return res.json();
+    }
+  });
+
+  // Query para buscar atividades da sala
+  const {
+    data: activities,
+  } = useQuery<Array<{id: string; title: string; description: string; totalQuestions: number; timeLimit: number; createdAt: string}>>({
+    queryKey: ["get-activities", roomId],
+    queryFn: async () => {
+      const res = await fetch(`http://localhost:3333/rooms/${roomId}/activities`);
+      if (!res.ok) throw new Error("Erro ao buscar atividades");
       return res.json();
     }
   });
@@ -151,6 +165,31 @@ export function Room() {
     setPendingQuestion(null);
   }
 });
+
+  const createActivityMutation = useMutation<
+    { id: string; title: string },
+    Error
+  >({
+    mutationFn: async () => {
+      const res = await fetch(`http://localhost:3333/rooms/${roomId}/activities`, {
+        method: "POST",
+      });
+      if (!res.ok) throw new Error("Erro ao criar atividade");
+      return res.json();
+    },
+    onSuccess: (data) => {
+      toast.success("Atividade criada com sucesso! Redirecionando...");
+      // Atualizar lista de atividades
+      queryClient.invalidateQueries({ queryKey: ["get-activities", roomId] });
+      // Redirecionar para a página da atividade na mesma aba
+      setTimeout(() => {
+        navigate(`/activity/${data.id}`);
+      }, 1500);
+    },
+    onError: (err) => {
+      toast.error(err.message || "Erro ao criar atividade");
+    }
+  });
 
   const handleCreateQuestion = async () => {
     if (!questionText.trim()) {
@@ -247,6 +286,80 @@ export function Room() {
             </div>
           </div>
         </div>
+
+        {/* Toolbar Section */}
+        <div className="mb-8 bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <BrainCircuit className="w-6 h-6 text-blue-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Ferramentas da Sala</h3>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <Link to={`/room/${roomId}/record-audio`}>
+                <Button 
+                  variant="outline"
+                  className="flex items-center space-x-2 border-green-200 text-green-700 hover:bg-green-50 hover:border-green-300"
+                >
+                  <Ear className="w-4 h-4" />
+                  <span>Gravar Áudio</span>
+                </Button>
+              </Link>
+              
+              <Button 
+                onClick={() => {
+                  createActivityMutation.mutate();
+                }}
+                disabled={createActivityMutation.isPending}
+                className="flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white"
+              >
+                <BrainCircuit className="w-4 h-4" />
+                <span>{createActivityMutation.isPending ? "Criando..." : "Criar Atividade"}</span>
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Activities Section */}
+        {activities && activities.length > 0 && (
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+              <BrainCircuit className="w-6 h-6 text-purple-600 mr-2" />
+              Atividades Disponíveis
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {activities.map((activity) => (
+                <div key={activity.id} className="bg-white rounded-lg shadow-md border border-gray-200 p-4 hover:shadow-lg transition-shadow">
+                  <div className="flex items-start justify-between mb-3">
+                    <h4 className="text-lg font-semibold text-gray-900">{activity.title}</h4>
+                    <div className="flex items-center space-x-1 text-sm text-gray-500">
+                      <Clock className="w-4 h-4" />
+                      <span>{activity.timeLimit}min</span>
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-600 text-sm mb-3">{activity.description}</p>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">
+                      {activity.totalQuestions} questões
+                    </span>
+                    <Link to={`/activity/${activity.id}`}>
+                      <Button size="sm" className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white">
+                        Fazer Atividade
+                      </Button>
+                    </Link>
+                  </div>
+                  
+                  <div className="text-xs text-gray-400 mt-2">
+                    Criada em {new Date(activity.createdAt).toLocaleDateString("pt-BR")}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Create Question Section */}
         <div className="mb-8">

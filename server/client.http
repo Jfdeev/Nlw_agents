@@ -1,7 +1,45 @@
 
 
 # Get rooms
+### Get all rooms
 GET http://localhost:3333/rooms
+
+### Create a room
+POST http://localhost:3333/rooms
+Content-Type: application/json
+
+{
+  "name": "Test Room",
+  "description": "A test room for testing activities"
+}
+
+### Get room by ID
+GET http://localhost:3333/rooms/YOUR_ROOM_ID_HERE
+
+### Create activity for a room
+POST http://localhost:3333/rooms/YOUR_ROOM_ID_HERE/activities
+Content-Type: application/json
+
+### Get activities for a room
+GET http://localhost:3333/rooms/YOUR_ROOM_ID_HERE/activities
+
+### Get specific activity
+GET http://localhost:3333/activities/YOUR_ACTIVITY_ID_HERE
+
+### Submit activity response
+POST http://localhost:3333/activities/YOUR_ACTIVITY_ID_HERE/submit
+Content-Type: application/json
+
+{
+  "userName": "João Teste",
+  "answers": {
+    "1": "A",
+    "2": "B", 
+    "3": "C",
+    "4": "D",
+    "5": "A"
+  }
+}
 
 ###
 

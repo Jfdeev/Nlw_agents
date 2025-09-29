@@ -174,3 +174,88 @@ Responda apenas o JSON, sem texto adicional:`.trim();
     };
   }
 }
+
+export async function generateActivity(roomContext: string) {
+  const prompt = `Você é um professor especializado em criar atividades educacionais baseadas no conteúdo das aulas.
+
+CONTEXTO DA AULA: ${roomContext}
+
+TAREFA: Crie uma atividade de múltipla escolha com base no conteúdo fornecido.
+
+INSTRUÇÕES:
+1. Analise o conteúdo e identifique os conceitos principais
+2. Crie 5 questões de múltipla escolha
+3. Cada questão deve ter 4 alternativas (A, B, C, D)
+4. Apenas UMA alternativa deve estar correta
+5. As questões devem ser variadas: conceituais, práticas e aplicação
+6. Use linguagem clara e objetiva
+7. Responda APENAS no formato JSON:
+
+{
+  "title": "Nome da atividade",
+  "description": "Descrição breve da atividade",
+  "timeLimit": 15,
+  "questions": [
+    {
+      "id": 1,
+      "question": "Texto da pergunta aqui?",
+      "alternatives": [
+        { "id": "A", "text": "Alternativa A" },
+        { "id": "B", "text": "Alternativa B" },
+        { "id": "C", "text": "Alternativa C" },
+        { "id": "D", "text": "Alternativa D" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Explicação da resposta correta"
+    }
+  ]
+}
+
+Responda apenas o JSON válido:`.trim();
+
+  try {
+    const response = await gemini.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: [{ text: prompt }]
+    });
+
+    if (!response.text) {
+      throw new Error('No response from AI');
+    }
+
+    // Limpa a resposta e tenta fazer parse do JSON
+    const cleanResponse = response.text.trim().replace(/```json\n?|\n?```/g, '');
+    const activity = JSON.parse(cleanResponse);
+    
+    // Valida se tem os campos necessários
+    if (!activity.title || !activity.questions || !Array.isArray(activity.questions)) {
+      throw new Error('Invalid activity format');
+    }
+
+    return activity;
+
+  } catch (error) {
+    console.error('Error generating activity:', error);
+    
+    // Fallback: atividade básica
+    return {
+      title: "Atividade sobre o conteúdo da aula",
+      description: "Teste seus conhecimentos sobre os conceitos apresentados",
+      timeLimit: 15,
+      questions: [
+        {
+          id: 1,
+          question: "Com base no conteúdo apresentado, qual é o conceito principal discutido?",
+          alternatives: [
+            { id: "A", text: "Conceito relacionado ao tema" },
+            { id: "B", text: "Outro conceito importante" },
+            { id: "C", text: "Conceito secundário" },
+            { id: "D", text: "Conceito não relacionado" }
+          ],
+          correctAnswer: "A",
+          explanation: "Esta é a resposta correta baseada no conteúdo apresentado."
+        }
+      ]
+    };
+  }
+}
