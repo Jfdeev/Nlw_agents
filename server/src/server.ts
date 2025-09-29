@@ -16,6 +16,7 @@ import { getRoomRoute } from './routes/get-room.ts';
 import { getQuestionsByRoomRoute } from './routes/get-questions-by-room.ts'
 import { uploadAudioRoute } from './routes/upload-audio.ts';
 import { createRoomFromAudioRoute } from './routes/create-room-from-audio.ts';
+import { deleteRoomRoute } from './routes/delete-room.ts';
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -45,6 +46,7 @@ app.register(createQuestionRoute);
 app.register(getRoomRoute);
 app.register(getQuestionsByRoomRoute);
 app.register(uploadAudioRoute);
+app.register(deleteRoomRoute);
 
 app.listen({port: env.PORT }).then(() => {
     console.log(`Server is running on http://localhost:${env.PORT}`)

@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Calendar, Users, Plus, X, Mic } from "lucide-react";
+import { Calendar, Users, Plus, X, Mic, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
@@ -77,6 +77,26 @@ export function CreateRoom() {
       }
     }
   );
+
+  const deleteRoomMutation = useMutation({
+    mutationFn: async (roomId: string) => {
+      const res = await fetch(`http://localhost:3333/rooms/${roomId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`Falha ao deletar sala: ${res.status} ${text}`);
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast.success("Sala deletada com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["get-rooms"] });
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || "Erro ao deletar sala");
+    }
+  });
 
   const handleCreateRoom = async (form: HTMLFormElement) => {
     const formData = new FormData(form);
@@ -266,9 +286,26 @@ export function CreateRoom() {
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
                       <Users className="w-6 h-6 text-white" />
                     </div>
-                    <Badge className="bg-blue-100 text-blue-600 font-medium px-3 py-1 rounded-full">
-                      {room.questionsCount} Perguntas
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-blue-100 text-blue-600 font-medium px-3 py-1 rounded-full">
+                        {room.questionsCount} Perguntas
+                      </Badge>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          if (confirm(`Tem certeza que deseja deletar a sala "${room.name}"? Esta ação não pode ser desfeita.`)) {
+                            deleteRoomMutation.mutate(room.id);
+                          }
+                        }}
+                        disabled={deleteRoomMutation.isPending}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
 
                   <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">{room.name}</h3>
