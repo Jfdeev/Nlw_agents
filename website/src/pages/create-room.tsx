@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -7,16 +8,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Label } from "@/components/ui/label";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Calendar, Mic, Plus, Trash2, Users, X } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Calendar, Users, Plus, X, Mic, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
 
 type Room = {
   id: string;
@@ -39,7 +39,7 @@ export function CreateRoom() {
   const {
     data: rooms,
     isLoading: isRoomsLoading,
-    isError: isRoomsError
+    isError: isRoomsError,
   } = useQuery<Rooms>({
     queryKey: ["get-rooms"],
     queryFn: async () => {
@@ -47,36 +47,38 @@ export function CreateRoom() {
       if (!res.ok) throw new Error("Erro ao buscar salas");
       const data: Rooms = await res.json();
       return data;
-    }
+    },
   });
 
-  const createRoomMutation = useMutation<CreateRoomResponse, Error, { name: string; description: string }>(
-    {
-      mutationFn: async (payload: { name: string; description: string }) => {
-        const res = await fetch("http://localhost:3333/rooms", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        if (!res.ok) {
-          // tenta ler corpo para mensagem de erro
-          const text = await res.text().catch(() => "");
-          throw new Error(`Falha ao criar sala: ${res.status} ${text}`);
-        }
-        return res.json();
-      },
-      onSuccess: () => {
-        toast.success("Sala criada com sucesso!");
-        // Atualiza a lista de salas
-        queryClient.invalidateQueries({ queryKey: ["get-rooms"] });
-        // Fecha o dialog
-        setIsDialogOpen(false);
-      },
-      onError: (err) => {
-        toast.error(err.message || "Erro ao criar sala");
+  const createRoomMutation = useMutation<
+    CreateRoomResponse,
+    Error,
+    { name: string; description: string }
+  >({
+    mutationFn: async (payload: { name: string; description: string }) => {
+      const res = await fetch("http://localhost:3333/rooms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        // tenta ler corpo para mensagem de erro
+        const text = await res.text().catch(() => "");
+        throw new Error(`Falha ao criar sala: ${res.status} ${text}`);
       }
-    }
-  );
+      return res.json();
+    },
+    onSuccess: () => {
+      toast.success("Sala criada com sucesso!");
+      // Atualiza a lista de salas
+      queryClient.invalidateQueries({ queryKey: ["get-rooms"] });
+      // Fecha o dialog
+      setIsDialogOpen(false);
+    },
+    onError: (err) => {
+      toast.error(err.message || "Erro ao criar sala");
+    },
+  });
 
   const deleteRoomMutation = useMutation({
     mutationFn: async (roomId: string) => {
@@ -95,7 +97,7 @@ export function CreateRoom() {
     },
     onError: (err: Error) => {
       toast.error(err.message || "Erro ao deletar sala");
-    }
+    },
   });
 
   const handleCreateRoom = async (form: HTMLFormElement) => {
@@ -109,7 +111,10 @@ export function CreateRoom() {
       return;
     }
 
-    await createRoomMutation.mutateAsync({ name: name.trim(), description: description.trim() });
+    await createRoomMutation.mutateAsync({
+      name: name.trim(),
+      description: description.trim(),
+    });
   };
 
   return (
@@ -119,7 +124,8 @@ export function CreateRoom() {
         <div className="text-center mb-8">
           <h1 className="text-5xl font-bold text-gray-900 mb-4">Whisper</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Descubra salas incríveis para fazer suas perguntas ou criar a sua própria
+            Descubra salas incríveis para fazer suas perguntas ou criar a sua
+            própria
           </p>
         </div>
 
@@ -136,7 +142,7 @@ export function CreateRoom() {
                   Criar Nova Sala
                 </Button>
               </DialogTrigger>
-              
+
               {/* Dialog content remains the same */}
               <DialogContent className="max-w-md mx-auto bg-white border-0 shadow-2xl rounded-2xl overflow-hidden">
                 <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4 relative">
@@ -148,7 +154,8 @@ export function CreateRoom() {
                       Criar Nova Sala
                     </DialogTitle>
                     <DialogDescription className="text-blue-100 mt-2">
-                      Preencha os detalhes para criar uma sala de perguntas incrível
+                      Preencha os detalhes para criar uma sala de perguntas
+                      incrível
                     </DialogDescription>
                   </DialogHeader>
                   <DialogClose asChild>
@@ -175,7 +182,10 @@ export function CreateRoom() {
                   }}
                 >
                   <div className="space-y-2">
-                    <Label htmlFor="room-name" className="text-gray-700 font-medium flex items-center">
+                    <Label
+                      htmlFor="room-name"
+                      className="text-gray-700 font-medium flex items-center"
+                    >
                       <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
                       Nome da Sala
                     </Label>
@@ -189,7 +199,10 @@ export function CreateRoom() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="room-description" className="text-gray-700 font-medium flex items-center">
+                    <Label
+                      htmlFor="room-description"
+                      className="text-gray-700 font-medium flex items-center"
+                    >
                       <div className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></div>
                       Descrição
                     </Label>
@@ -235,9 +248,7 @@ export function CreateRoom() {
 
             {/* New button for creating room from audio */}
             <Link to="/create-from-audio">
-              <Button
-                className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-              >
+              <Button className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                 <Mic className="w-5 h-5 mr-2" />
                 Criar com Áudio
               </Button>
@@ -246,7 +257,11 @@ export function CreateRoom() {
 
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-6 max-w-2xl mx-auto">
             <p className="text-green-800 font-medium">
-              Agora é possivel criar salas automaticamente a partir de gravações de áudio! <br />Com isso sendo possivel extrair o contexto da conversa e criar salas interativas com esse contexto sem precisar alimentar a sala com os audios.
+              Agora é possivel criar salas automaticamente a partir de gravações
+              de áudio! <br />
+              Com isso sendo possivel extrair o contexto da conversa e criar
+              salas interativas com esse contexto sem precisar alimentar a sala
+              com os audios.
             </p>
           </div>
         </div>
@@ -254,7 +269,9 @@ export function CreateRoom() {
         {/* Rooms Section */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-bold text-gray-900">Salas Disponíveis</h2>
+            <h2 className="text-3xl font-bold text-gray-900">
+              Salas Disponíveis
+            </h2>
             <div className="flex items-center text-gray-500 bg-white px-4 py-2 rounded-full shadow-sm">
               <Users className="w-5 h-5 mr-2" />
               <span className="font-medium">{rooms?.length ?? 0} salas</span>
@@ -271,7 +288,9 @@ export function CreateRoom() {
 
           {/* Error State */}
           {isRoomsError && (
-            <div className="text-center py-8 text-red-500">Erro ao carregar salas.</div>
+            <div className="text-center py-8 text-red-500">
+              Erro ao carregar salas.
+            </div>
           )}
 
           {/* Rooms Grid */}
@@ -297,7 +316,11 @@ export function CreateRoom() {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          if (confirm(`Tem certeza que deseja deletar a sala "${room.name}"? Esta ação não pode ser desfeita.`)) {
+                          if (
+                            confirm(
+                              `Tem certeza que deseja deletar a sala "${room.name}"? Esta ação não pode ser desfeita.`
+                            )
+                          ) {
                             deleteRoomMutation.mutate(room.id);
                           }
                         }}
@@ -308,9 +331,13 @@ export function CreateRoom() {
                     </div>
                   </div>
 
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">{room.name}</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                    {room.name}
+                  </h3>
 
-                  <p className="text-gray-600 mb-4 line-clamp-3 leading-relaxed">{room.description}</p>
+                  <p className="text-gray-600 mb-4 line-clamp-3 leading-relaxed">
+                    {room.description}
+                  </p>
 
                   <div className="flex items-center text-sm text-gray-500 mt-auto">
                     <Calendar className="w-4 h-4 mr-2" />
@@ -319,7 +346,7 @@ export function CreateRoom() {
                       {new Date(room.created_at).toLocaleDateString("pt-BR", {
                         day: "2-digit",
                         month: "short",
-                        year: "numeric"
+                        year: "numeric",
                       })}
                     </span>
                   </div>
@@ -340,9 +367,16 @@ export function CreateRoom() {
               <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Users className="w-12 h-12 text-blue-500" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Nenhuma sala encontrada</h3>
-              <p className="text-gray-600 mb-6">Seja o primeiro a criar uma sala e iniciar as conversas!</p>
-              <Button onClick={() => setIsDialogOpen(true)} className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-2 shadow-lg">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Nenhuma sala encontrada
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Seja o primeiro a criar uma sala e iniciar as conversas!
+              </p>
+              <Button
+                onClick={() => setIsDialogOpen(true)}
+                className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-2 shadow-lg"
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Criar Primeira Sala
               </Button>
