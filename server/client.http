@@ -2,3 +2,8 @@
 
 # Get rooms
 GET http://localhost:3333/rooms
+
+###
+
+# Delete room (use a valid room ID from the GET response above)
+DELETE http://localhost:3333/rooms/9bc1afb8-6703-4841-8e3d-a5b90269bc3a
